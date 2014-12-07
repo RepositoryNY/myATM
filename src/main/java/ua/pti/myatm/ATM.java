@@ -35,6 +35,7 @@ public class ATM {
             {
                 isCardValid = false;
             }
+            return isCardValid;
         }
         /*catch (NullPointerException e)
         {
@@ -44,7 +45,6 @@ public class ATM {
         {
             
         }
-        return isCardValid;
     }
     
     //Возвращает сколько денег есть на счету
@@ -54,6 +54,7 @@ public class ATM {
         {
             if (!isCardValid) throw new NoCardInserted("Trying to check balance while card is not valid");
             balance =  cardInside.getAccount().getBalance();
+            return balance;
         }
         /*catch (NoCardInserted e)
         {
@@ -67,7 +68,7 @@ public class ATM {
         {
             
         }
-        return balance;
+
     }
     
     //Метод для снятия указанной суммы
