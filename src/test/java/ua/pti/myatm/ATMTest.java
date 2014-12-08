@@ -29,6 +29,7 @@ public class ATMTest {
         ATM atm = new ATM();
         Card card = null;
         assertFalse(atm.validateCard(card, 1234));
+        fail("test not valid");
     }
     
     @Test
@@ -97,6 +98,7 @@ public class ATMTest {
         when(card.getAccount()).thenReturn(acc);
         atm.validateCard(card, 1434);
         atm.checkBalance();
+        fail("test not valid");
     }
 
     @Test
@@ -125,6 +127,7 @@ public class ATMTest {
         when(card.checkPin(anyInt())).thenReturn(Boolean.TRUE);
         atm.validateCard(card, 1434);
         atm.getCash(500);
+        fail("test not valid");
     }
     
     @Test(expected=NotEnoughMoneyInATM.class)
@@ -136,6 +139,7 @@ public class ATMTest {
         when(card.checkPin(anyInt())).thenReturn(Boolean.TRUE);
         atm.validateCard(card, 1434);
         atm.getCash(500);
+        fail("test not valid");
     }
     
     @Test(expected=NotEnoughMoneyInAccount.class)
@@ -151,6 +155,7 @@ public class ATMTest {
         when(acc.getBalance()).thenReturn(100.0);
         when(acc.withdrow(500)).thenReturn(500.0);
         atm.getCash(500);
+        fail("test not valid");
     }    
     
 
