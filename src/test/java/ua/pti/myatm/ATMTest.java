@@ -7,6 +7,7 @@ package ua.pti.myatm;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.InOrder;
 import static org.mockito.Mockito.*;
 
 /**
@@ -157,6 +158,25 @@ public class ATMTest {
         atm.getCash(500);
         fail("test not valid");
     }    
+    
+    @Test
+    public void testInOrderInGetCashMethod()throws NotEnoughMoneyInAccount,NotEnoughMoneyInATM,NoCardInserted {
+        ATM atm = new ATM();
+        Card card = mock(Card.class);
+        Account acc = mock(Account.class);
+        when(card.isBlocked()).thenReturn(Boolean.FALSE);
+        when(card.checkPin(anyInt())).thenReturn(Boolean.TRUE);
+        atm.validateCard(card, 1434);
+        when(card.getAccount()).thenReturn(acc);
+        when(acc.getBalance()).thenReturn(1000.0);
+        when(acc.withdrow(500)).thenReturn(500.0);
+        atm.getCash(500);
+        InOrder order = inOrder(card, acc);
+        order.verify(card).getAccount();
+        order.verify(acc).getBalance();
+        order.verify(card).getAccount();
+        order.verify(acc).withdrow(anyDouble());
+    }
     
 
 }
