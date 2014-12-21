@@ -31,10 +31,10 @@ public class ATM {
                 cardInside = card;
                 isCardValid = true;
             }
-            else 
-            {
-                isCardValid = false;
-            }
+//            else 
+//            {
+//                isCardValid = false;
+//            }
             return isCardValid;
         }
         /*catch (NullPointerException e)
