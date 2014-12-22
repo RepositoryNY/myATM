@@ -3,7 +3,8 @@ package ua.pti.myatm;
 public class ATM {
     double moneyInATM;
     Card cardInside;
-    boolean isCardValid;
+    int NumOfTries;
+    Card cardBefore;
     
     ATM()
     {
@@ -12,47 +13,128 @@ public class ATM {
     ATM(double moneyInATM){
         this.moneyInATM = moneyInATM;
         cardInside = null;
-        isCardValid = false;
+        cardBefore = null;
+        NumOfTries = 0;
     }
 
     // Возвращает количество денег в банкомате
     public double getMoneyInATM() {
          return moneyInATM;
     }
+    public Card getCardBefore()
+    {
+        return cardBefore;
+    }
     
-    //С вызова данного метода начинается работа с картой
-    //Метод принимает карту и пин-код, проверяет пин-код карты и не заблокирована ли она
-    //Если неправильный пин-код или карточка заблокирована, возвращаем false. При этом, вызов всех последующих методов у ATM с данной картой должен генерировать исключение NoCardInserted
-    public boolean validateCard(Card card, int pinCode) throws NullPointerException{
+    public boolean validateCard(Card card, int pinCode) throws NullPointerException
+    {
         try
         {
-            if (!card.isBlocked() && card.checkPin(pinCode))
+            if (card.isBlocked())
+            {
+                cardBefore = card;
+                return false;     
+            }
+            if(card.checkPin(pinCode))
             {
                 cardInside = card;
-                isCardValid = true;
+                cardBefore = card;
+                return true;
             }
-//            else 
-//            {
-//                isCardValid = false;
-//            }
-            return isCardValid;
+            else
+            {
+                if(cardBefore == null)
+                {
+                    cardBefore = card;
+                    NumOfTries = 1;
+                    return false;
+                }
+                if(NumOfTries >= 3)
+                {
+                    cardBefore = card;
+                    return false;
+                }
+                if(NumOfTries < 3)
+                {
+                    NumOfTries++;
+                    cardBefore = card;
+                    return false;
+                }
+            }
+            return false;
         }
-        /*catch (NullPointerException e)
-        {
-            System.err.println("You try to validating without a card");
-        }*/
         finally
         {
             
         }
     }
     
+    //С вызова данного метода начинается работа с картой
+    //Метод принимает карту и пин-код, проверяет пин-код карты и не заблокирована ли она
+    //Если неправильный пин-код или карточка заблокирована, возвращаем false. При этом, вызов всех последующих методов у ATM с данной картой должен генерировать исключение NoCardInserted
+//    public boolean validateCard(Card card, int pinCode) throws NullPointerException{
+//        try
+//        {
+//            if (!card.isBlocked()) {
+//                if (card.checkPin(pinCode)) {
+//                    cardInside = card;
+//                    cardBefore = card;
+//                    return true;
+//                } 
+//                else 
+//                {
+//                    if (cardBefore == null)
+//                    {
+//                        NumOfTries = 1;
+//                    }
+//                    else if (card.equals(cardBefore)) 
+//                    {
+//                        if (NumOfTries >= 3) 
+//                        {
+//                            card.block();
+//                        } else 
+//                        {
+//                            NumOfTries++;
+//                        }
+//                    } 
+//                    else 
+//                    {
+//                        NumOfTries = 0;
+//                    }
+//                }
+//            }
+//            cardBefore = card;
+//            return false;
+//        }
+//            if (!card.isBlocked() && card.checkPin(pinCode))
+//            {
+//                if (NumOfTries < 3)
+//                {
+//                    cardInside = card;
+//                    isCardValid = true;
+//                }
+//                else
+//                {
+//                    card.block();
+//                }
+//            }
+//            return isCardValid;
+        /*catch (NullPointerException e)
+        {
+            System.err.println("You try to validating without a card");
+        }*/
+//        finally
+//        {
+//            
+//        }
+//    }
+    
     //Возвращает сколько денег есть на счету
     public double checkBalance() throws NoCardInserted {
-        double balance = 0;
+        double balance;
         try 
         {
-            if (!isCardValid) throw new NoCardInserted("Trying to check balance while card is not valid");
+            if (cardInside == null) throw new NoCardInserted("Trying to check balance while card is not valid");
             balance =  cardInside.getAccount().getBalance();
             return balance;
         }
@@ -80,7 +162,7 @@ public class ATM {
     public double getCash(double amount) throws NotEnoughMoneyInATM, NotEnoughMoneyInAccount, NoCardInserted{
         try
         {
-            if (isCardValid)
+            if (cardInside != null)
             {
                 if(moneyInATM >= amount)
                 {

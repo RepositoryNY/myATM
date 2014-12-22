@@ -4,6 +4,8 @@ public interface Card {
     //Заблокирована ли карта или нет
     public boolean isBlocked();
     
+    public boolean block();
+    
     //Возвращает счет связанный с данной картой
     public Account getAccount();
 
